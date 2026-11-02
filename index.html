@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Les Chroniques d'Astrelune — la place du village</title>
+<style>
+/* Style D (choisi le 30/10) : titres « Eagle Lake » (calligraphie de conte), textes « Andika » (très lisible pour les élèves). Polices libres (OFL). */
+@font-face{font-family:Conte;src:url(polices/eagle-lake-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:Andika;font-weight:400;src:url(polices/andika-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:Andika;font-weight:700;src:url(polices/andika-latin-700-normal.woff2) format('woff2')}
+:root{--bois:#7a4a22;--bois-c:#9a6334;--bois-f:#4a2a10;--parchemin:#fbf1d8;--or:#d4af37;--or-c:#f4c84a;--ruban:#b8352b;--ruban-f:#7a1f18;--encre:#3a2614}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#a8d8ff;font-family:Andika,system-ui,sans-serif;font-weight:700;color:var(--encre);user-select:none;-webkit-user-select:none}
+#scene,#scene canvas{position:fixed;inset:0;display:block;touch-action:none}
+.cache{display:none!important}
+/* parchemin dans un cadre de bois filet d'or */
+.parchemin{background:radial-gradient(ellipse at 50% 40%,#fbf1d8,#efdcae 75%,#e2c68c);border:7px solid var(--bois);border-radius:18px;
+  box-shadow:inset 0 0 0 3px var(--or),inset 0 0 30px rgba(120,70,20,.35),0 8px 0 var(--bois-f),0 16px 30px rgba(0,0,0,.3)}
+.titre-or{font-family:Conte,serif;font-weight:400;color:var(--or-c);-webkit-text-stroke:2px var(--bois-f);paint-order:stroke fill;text-shadow:0 3px 0 var(--bois-f),0 5px 8px rgba(0,0,0,.35);line-height:1.05}
+.ruban{display:inline-block;font-family:Conte,serif;color:#fff3d6;background:var(--ruban);padding:4px 26px;border-radius:4px;box-shadow:0 3px 0 var(--ruban-f);position:relative}
+.ruban::before,.ruban::after{content:"";position:absolute;top:8px;width:18px;height:100%;background:var(--ruban-f);z-index:-1}
+.ruban::before{left:-12px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,40% 50%)}
+.ruban::after{right:-12px;clip-path:polygon(0 0,100% 0,60% 50%,100% 100%,0 100%)}
+.bouton-bois{font:inherit;font-family:Andika,system-ui;font-weight:700;color:#fff3d6;background:linear-gradient(var(--bois-c),var(--bois));border:2px solid var(--or);border-radius:14px;box-shadow:0 5px 0 var(--bois-f);cursor:pointer}
+.bouton-bois:hover{filter:brightness(1.1)}
+.bouton-bois:active{transform:translateY(3px);box-shadow:0 2px 0 var(--bois-f)}
+#chargement,#choix{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(#5aa6ea,#a8d8ff 60%,#f6e7c8);padding:16px}
+#choix{background:none;padding:0;pointer-events:none;align-items:flex-start}
+#choix .boite{margin-top:max(18px,3vh);padding:18px 34px 16px;pointer-events:auto}
+#choix .boite h1{font-size:clamp(30px,4.4vw,46px)}
+#choix .bouton-bois{position:fixed;transform:translate(-50%,10px);pointer-events:auto;font-size:23px;padding:12px 24px;min-width:170px;text-align:center}
+#choix .bouton-bois small{display:block;font-size:15px;font-weight:400;opacity:.9}
+.boite{padding:34px 40px 30px;text-align:center;max-width:min(680px,94vw);position:relative;isolation:isolate}
+.boite h1{font-size:clamp(34px,5.4vw,54px)}
+.boite .ruban{font-size:clamp(18px,2.4vw,24px);margin:12px 0 20px}
+.boite p{font-size:clamp(17px,2vw,21px)}
+#barre{width:min(420px,70vw);height:20px;border-radius:10px;background:#e2c68c;border:3px solid var(--bois);box-shadow:inset 0 2px 4px rgba(0,0,0,.25);overflow:hidden;margin:6px auto 12px}
+#barre>div{height:100%;width:0;background:linear-gradient(#f8d968,var(--or));transition:width .2s}
+.choix{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.choix button{font-size:23px;padding:14px 26px;min-width:180px}
+.choix small{display:block;font-size:15px;font-weight:400;opacity:.9}
+#interface{position:fixed;inset:0;pointer-events:none}
+#titre{position:absolute;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);font-size:clamp(18px,2.4vw,24px);white-space:nowrap;padding:6px 28px}
+#outils{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;pointer-events:auto}
+#outils button.actif{background:linear-gradient(#e2b04a,#b8862b);border-color:#fff3d6}
+#outils button{width:58px;height:58px;border-radius:50%;font-size:26px;display:flex;align-items:center;justify-content:center;padding:0}
+#aide{position:absolute;left:max(14px,env(safe-area-inset-left));bottom:max(14px,env(safe-area-inset-bottom));padding:12px 16px;font-size:15px;font-weight:400;line-height:1.5;pointer-events:auto;max-width:340px;border-width:5px}
+#aide b{font-weight:700}
+#aide .qualite{margin-top:6px;font-size:12px;opacity:.75}#aide .qualite a{color:inherit}
+#joystick{position:fixed;z-index:4;left:max(22px,env(safe-area-inset-left));bottom:max(22px,env(safe-area-inset-bottom));width:132px;height:132px;border-radius:50%;background:radial-gradient(circle,rgba(255,244,214,.35),rgba(120,80,40,.35));border:4px solid rgba(110,70,30,.55);touch-action:none;pointer-events:auto}
+#joystick div{position:absolute;left:34px;top:34px;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9b0,#c98b3c);border:3px solid #7a4a1c;box-shadow:0 3px 6px rgba(0,0,0,.35)}
+body:has(#dialogue:not(.cache)) #joystick{display:none!important}
+#aide.replie{max-width:none;padding:6px 12px;cursor:pointer}#aide.replie>*:not(.ouvrir){display:none}#aide .ouvrir{display:none}#aide.replie .ouvrir{display:block;font-weight:700}
+body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
+#fps{position:fixed;z-index:40;top:6px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font:13px monospace;padding:3px 8px;border-radius:6px;pointer-events:none}
+#dialogue{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(760px,94vw);padding:30px 30px 20px;pointer-events:auto;z-index:5}
+#dialogue-nom{position:absolute;top:-22px;left:24px;font-size:22px;padding:4px 26px}
+#dialogue-texte{font-size:clamp(18px,2.2vw,22px);line-height:1.5;min-height:3em}
+#dialogue-suite{float:right;margin-top:12px;font-size:19px;padding:10px 22px}
+
+/* ---- bourse et boussole (en haut à gauche) ---- */
+#hud{z-index:25;position:absolute;top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left));display:flex;align-items:center;gap:10px;pointer-events:auto}
+#boussole{width:76px;height:76px;padding:0;border:0;background:none;cursor:pointer;filter:drop-shadow(0 3px 2px rgba(60,30,0,.55)) drop-shadow(0 6px 8px rgba(0,0,0,.25))}
+.morceau-nouveau{animation:morceau 2.4s ease-out both}
+@keyframes morceau{0%{opacity:0;filter:brightness(3)}40%{opacity:1;filter:brightness(2.2)}100%{opacity:1;filter:brightness(1)}}
+.grande-boussole svg{filter:drop-shadow(0 6px 10px rgba(80,40,0,.35))}
+#bourse{display:flex;align-items:center;gap:8px;padding:8px 18px 8px 12px;font-size:26px;border-width:5px;border-radius:30px}
+#bourse.flash{animation:flash .8s}
+@keyframes flash{30%{transform:scale(1.18);filter:brightness(1.15)}}
+.po{display:inline-block;width:1.05em;height:1.05em;border-radius:50%;vertical-align:-.15em;background:radial-gradient(circle at 38% 32%,#fff6c2,#f4c84a 45%,#b8860b 100%);box-shadow:inset 0 0 0 2px #9a6f0b,0 2px 0 #6b4a06;position:relative}
+.po::after{content:"✦";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.6em;color:#8a5f06}
+/* ---- dialogue : choix ---- */
+#dialogue-choix{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;margin-top:14px}
+#dialogue-choix .bouton-bois{font-size:18px;padding:10px 18px}
+/* ---- fenêtres (quiz, maisons, carnet, messages) ---- */
+.voile{position:fixed;inset:0;z-index:20;background:rgba(30,20,10,.45);display:flex;align-items:center;justify-content:center;padding:14px;pointer-events:auto}
+.quiz-carte,.modal-carte{width:min(760px,100%);max-height:100%;overflow-y:auto;touch-action:pan-y;padding:24px 26px 24px}
+.modal-carte{width:min(480px,100%);animation:pop .2s}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.qz-entete,.bat-bandeau{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.qz-titre,.bat-titre{flex:1;font-family:Conte,serif;font-weight:400;font-size:clamp(22px,3vw,28px);color:var(--zc,#7a4a22);line-height:1.1}
+.fermer{width:44px;height:44px;border-radius:12px;border:2px solid var(--or);background:linear-gradient(var(--bois-c),var(--bois));color:#fff3d6;font-size:20px;font-weight:700;cursor:pointer;box-shadow:0 4px 0 var(--bois-f);flex:none}
+.qz-jauge{display:flex;gap:6px;flex-wrap:wrap}
+.planche{width:30px;height:18px;border-radius:5px;background:#e8d6aa;box-shadow:inset 0 2px 3px rgba(0,0,0,.15)}
+.planche.pleine{background:var(--zc,#2b8a3e);box-shadow:inset 0 -4px 0 rgba(0,0,0,.25);animation:pop .3s}
+.qz-vies{font-size:22px;letter-spacing:2px}.qz-vies .perdu{filter:grayscale(1);opacity:.35}
+.qz-num{font-weight:700;color:#8a6a3a;font-size:16px}
+.qz-contexte{background:#fffaf0;border:3px solid #e2c68c;border-radius:14px;padding:12px 16px;font-size:19px;line-height:1.5;font-weight:400;margin:8px 0 4px;white-space:pre-line}
+.qz-visuel{display:flex;justify-content:center;margin:10px 0 2px}
+.vis-svg{width:100%;max-width:380px;max-height:260px;height:auto;background:#fffaf0;border-radius:10px}
+.qz-question{font-size:clamp(22px,3.2vw,30px);font-weight:700;line-height:1.3;margin:10px 0 18px;white-space:pre-line}
+.qz-reponses{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.qz-reponses.longues{grid-template-columns:1fr}
+.qz-choix,.qz-mot{font:inherit;font-weight:700;color:var(--encre);background:#fffaf0;border:3px solid #e2c68c;border-radius:16px;box-shadow:0 5px 0 #c9a868;cursor:pointer;transition:transform .08s}
+.qz-choix{min-height:66px;padding:12px;font-size:21px}
+.qz-choix:active,.qz-mot:active{transform:translateY(3px)}
+.qz-choix.bonne,.qz-mot.bonne{background:#d8f5dc;border-color:#2b8a3e;box-shadow:0 5px 0 #2b8a3e}
+.qz-choix.mauvaise,.qz-mot.mauvaise{background:#fde2dc;border-color:#c0392b;box-shadow:0 5px 0 #c0392b}
+.qz-choix:disabled:not(.bonne):not(.mauvaise){opacity:.55}
+.qz-reponses.saisie{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.qz-champ{flex:1;min-width:140px;font:inherit;font-size:30px;font-weight:700;padding:10px 16px;border-radius:14px;border:3px solid #e2c68c;outline:none;text-align:center;background:#fffaf0;color:var(--encre)}
+.qz-champ:focus{border-color:var(--bois)}
+.qz-unite{font-size:22px;font-weight:700;color:#6b4a26}
+.qz-reponses.mots{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+.qz-mots{display:flex;flex-wrap:wrap;gap:10px 8px;justify-content:center;padding:4px 0}
+.qz-mot{padding:10px 14px;font-size:23px}
+.qz-mot.pris{background:#fff0b8;border-color:#d97706;box-shadow:0 5px 0 #d97706}
+.qz-reponses.mots .qz-ok{align-self:center;min-width:200px}
+.qz-retour,.mj-retour{margin-top:16px;font-size:19px;line-height:1.45;font-weight:400;border-radius:14px}
+.qz-retour b,.mj-retour b{font-weight:700}
+.qz-retour.bien,.qz-retour.oups,.mj-retour.bien,.mj-retour.oups{padding:12px 16px}
+.qz-retour.bien,.mj-retour.bien{background:#e3f6e5;color:#1f6e2c}
+.qz-retour.oups,.mj-retour.oups{background:#fdeedb;color:#8a4b08}
+.expl{color:#4a3a28}
+.qz-continuer{margin-top:18px;width:100%}
+/* boutons des fenêtres (noms de classes repris de la v0.18) */
+.brique{font:inherit;font-weight:700;font-size:20px;color:#fff;padding:12px 22px;border-radius:14px;border:2px solid rgba(255,255,255,.35);cursor:pointer;background:linear-gradient(#3fa34d,#2b8a3e);box-shadow:0 5px 0 #1d5e2a}
+.brique:active{transform:translateY(3px);box-shadow:0 2px 0 #1d5e2a}
+.brique.b-bleu{background:linear-gradient(#4a86e0,#2f6fd6);box-shadow:0 5px 0 #1f4f9e}
+.brique.b-gris{background:linear-gradient(#a99a80,#8d7f68);box-shadow:0 5px 0 #5e5444}
+.brique:disabled{opacity:.6;cursor:not-allowed}
+.modal-carte h3{font-family:Conte,serif;font-weight:400;font-size:28px;color:var(--bois);margin-bottom:8px;text-align:center}
+.modal-corps{font-size:18px;line-height:1.5;font-weight:400}
+.modal-corps p{margin:6px 0}
+.modal-boutons{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+#aide{display:none!important}
+.reg-corps{display:flex;flex-direction:column;gap:12px}.reg-corps .brique{font-size:18px;padding:10px 16px}
+.reg-corps p{font-size:16px;line-height:1.5;margin:0}.reg-corps .reg-titre{font-weight:700;color:var(--bois);margin-top:6px}
+.reg-corps .reg-ligne{display:flex;gap:8px;flex-wrap:wrap}.reg-corps .reg-ligne .brique{flex:1 1 140px}
+.reg-corps input{font:inherit;font-size:20px;padding:10px 12px;border-radius:10px;border:2px solid #b08a5a;text-align:center}
+.modal-corps input.prenom{font:inherit;font-size:24px;width:100%;padding:10px 12px;border-radius:10px;border:2px solid #b08a5a;text-align:center;margin-top:10px}
+.reg-corps .reg-erreur{color:#b3261e;font-weight:700;text-align:center}
+.grosses-etoiles{text-align:center;font-size:54px;color:#f4b400;text-shadow:0 3px 0 #8a5f06}
+.grosses-etoiles span{display:inline-block;animation:pop .5s backwards}
+.gain-or{text-align:center;font-size:24px;font-weight:700;color:#8a5f06}
+.grande-boussole{display:flex;justify-content:center;margin:6px 0}
+/* liste des défis d'une maison */
+.bat-etiquette{display:inline-block;background:var(--zc);color:#fff;font-weight:700;font-size:15px;padding:4px 12px;border-radius:8px;margin-bottom:6px}
+.bat-total{font-weight:700;font-size:18px;color:#8a5f06}
+.bat-desc{font-weight:400;font-size:18px;margin:0 0 12px}
+.bat-defis{display:flex;flex-direction:column;gap:10px}
+.defi{display:flex;align-items:center;gap:12px;background:#fffaf0;border:3px solid #e2c68c;border-radius:16px;padding:10px 12px}
+.defi-ic{font-size:28px;width:40px;text-align:center;flex:none}
+.defi-txt{flex:1;display:flex;flex-direction:column;gap:2px;font-size:18px}
+.defi-txt span{font-weight:400;font-size:15px;color:#6b4a26}
+.defi-et{font-size:22px;color:#f4b400;white-space:nowrap}
+.defi .brique{font-size:17px;padding:10px 14px;flex:none}
+/* mini-jeu chronométré */
+.mj-consigne{font-size:clamp(19px,2.6vw,24px);font-weight:700;line-height:1.35;margin:10px 0 14px}
+.mj-zone{display:flex;flex-direction:column;align-items:center;gap:12px}
+.mj-boutons{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.ch-intro{font-size:64px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.ch-intro small{font-size:17px;color:#6b4a26}
+.ch-haut{display:flex;align-items:center;gap:14px;width:min(100%,520px)}
+.ch-temps{flex:1;height:14px;border-radius:8px;background:#e8d6aa;overflow:hidden}
+.ch-temps i{display:block;height:100%;width:100%;background:var(--zc);transition:width .1s linear}
+.ch-score{font-size:18px}
+.ch-calc{font-size:clamp(34px,6vw,48px);font-weight:700}
+.ch-s{display:inline-block;min-width:2.2em;border-bottom:4px solid var(--zc);text-align:center;color:var(--zc)}
+.ch-flash{height:24px;font-size:18px}.ch-flash.bien{color:#1f6e2c}.ch-flash.oups{color:#c2410c}
+.ch-pave{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(100%,360px)}
+.ch-pave button{font:inherit;min-height:58px;border-radius:14px;background:#fffaf0;border:3px solid #e2c68c;box-shadow:0 5px 0 #c9a868;font-size:26px;font-weight:700;cursor:pointer}
+.ch-pave .ok{grid-column:1/-1;background:var(--zc);color:#fff;border-color:transparent;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+/* carnet de voyage (en attendant les villages en 3D) */
+.carnet-carte{width:min(980px,100%)}
+.carnet-titre{font-size:clamp(30px,4vw,42px);text-align:center}
+.carnet-sous{text-align:center;font-weight:400;margin:6px 0 4px}
+.carnet-note{text-align:center;font-weight:400;font-size:15px;color:#6b4a26;margin-bottom:14px}
+.carnet-maisons{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.carte-maison{font:inherit;text-align:left;display:flex;flex-direction:column;gap:6px;background:#fffaf0;border:3px solid #e2c68c;border-left:10px solid var(--zc);border-radius:14px;padding:10px 12px;cursor:pointer;box-shadow:0 4px 0 #c9a868;color:var(--encre)}
+.carte-maison:active{transform:translateY(3px)}
+.carte-maison b{font-size:19px}
+.panneau-maison{align-self:flex-start;background:var(--zc);color:#fff;font-size:14px;padding:3px 10px;border-radius:6px}
+.carte-maison .et{font-weight:400;color:#8a5f06}
+.carnet-pied{position:sticky;bottom:-24px;display:flex;justify-content:center;margin:16px -26px -24px;padding:12px;background:linear-gradient(rgba(239,220,174,0),#efdcae 35%)}
+/* voyage en barque */
+#voyage{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:linear-gradient(#1e4f7a,#0d2a44);opacity:0;transition:opacity .6s;pointer-events:auto}
+#voyage.vu{opacity:1}
+#fondu{position:fixed;inset:0;z-index:30;background:#1d140b;opacity:0;transition:opacity .45s;pointer-events:auto}
+#fondu.vu{opacity:1}
+#voyage .voyage-texte{font-family:Conte,serif;font-size:clamp(24px,3.4vw,36px);color:#fbf1d8;text-align:center;padding:20px}
+#voyage .barque{font-size:70px;display:block;text-align:center;animation:vogue 2.2s ease-in-out infinite}
+@keyframes vogue{50%{transform:translateY(-8px) rotate(-4deg)}}
+#toast{position:fixed;left:50%;top:90px;transform:translate(-50%,-20px);opacity:0;transition:.3s;z-index:40;background:#fbf1d8;border:4px solid var(--bois);border-radius:14px;padding:10px 18px;font-size:18px;pointer-events:none}
+#toast.vu{opacity:1;transform:translate(-50%,0)}
+#confettis{position:fixed;inset:0;pointer-events:none;z-index:45;overflow:hidden}
+#confettis i{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:tombe linear forwards}
+@keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
+@media (max-width:620px){.qz-reponses{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="chargement"><div class="parchemin boite">
+  <h1 class="titre-or">Les Chroniques<br>d'Astrelune</h1>
+  <div class="ruban">La Boussole d'Or</div>
+  <div id="barre"><div></div></div>
+  <p id="info">Chargement du village…</p>
+</div></div>
+<div id="choix" class="cache">
+  <div class="parchemin boite">
+    <h1 class="titre-or">Qui part à l'aventure ?</h1>
+    <p style="margin-top:8px">Choisis ton personnage : tu le garderas pendant toute l'aventure.</p>
+  </div>
+  <button id="choix-garcon" class="bouton-bois">Le garçon<small>tunique orange</small></button>
+  <button id="choix-fille" class="bouton-bois">La fille<small>tunique turquoise</small></button>
+</div>
+<div id="interface" class="cache">
+  <div id="hud"><button id="boussole" title="Boussole d'Or"></button><div id="bourse" class="parchemin" title="Ta bourse"><i class="po"></i><span id="bourse-or">0</span></div></div>
+  <div id="titre" class="ruban">La place du village</div>
+  <div id="outils">
+    <button id="b-zoom-plus" class="bouton-bois" title="Rapprocher la vue">➕</button>
+    <button id="b-zoom-moins" class="bouton-bois" title="Éloigner la vue">➖</button>
+    <button id="b-gauche" class="bouton-bois" title="Tourner la vue">↺</button>
+    <button id="b-droite" class="bouton-bois" title="Tourner la vue">↻</button>
+    <button id="b-vue" class="bouton-bois" title="Vue aventure : derrière le héros (touche V)">🎥</button>
+    <button id="b-reglages" class="bouton-bois" title="Paramètres">⚙️</button>
+    <button id="b-sortir" class="bouton-bois cache" title="Sortir de la maison">🚪</button>
+  </div>
+  <div id="dialogue" class="parchemin cache"><div id="dialogue-nom" class="ruban">Aora</div><p id="dialogue-texte"></p><button id="dialogue-suite" class="bouton-bois">Suivant ▸</button><div id="dialogue-choix"></div></div>
+  <div id="aide" class="parchemin"><b>Clique sur le sol</b> pour marcher (loin = courir), <b>sur un habitant</b> pour lui parler.<br><b>Flèches</b> ou <b>ZQSD</b> pour marcher, <b>Maj</b> pour courir.<br><b>Glisse</b> pour tourner ou incliner la vue, <b>molette</b> pour zoomer, <b>🎥</b> pour voir derrière le héros.</div>
+</div>
+<div id="quiz" class="voile cache"><div class="quiz-carte parchemin">
+  <div class="qz-entete"><div class="qz-titre"></div><div class="qz-vies"></div><div class="qz-jauge"></div><button class="fermer qz-fermer" aria-label="Quitter">✕</button></div>
+  <div class="qz-num"></div><div class="qz-contexte cache"></div><div class="qz-visuel cache"></div><div class="qz-question"></div>
+  <div class="qz-reponses"></div><div class="qz-retour"></div><button class="brique qz-continuer cache">Question suivante ▶</button>
+</div></div>
+<div id="mini" class="voile cache"><div class="quiz-carte parchemin">
+  <div class="qz-entete"><div class="qz-titre mj-titre"></div><div class="qz-jauge mj-jauge"></div><button class="fermer mj-fermer" aria-label="Quitter">✕</button></div>
+  <div class="mj-consigne"></div><div class="mj-zone"></div><div class="mj-retour"></div><div class="mj-boutons"></div>
+</div></div>
+<div id="maison" class="voile cache"><div class="quiz-carte parchemin">
+  <div class="bat-etiquette"></div>
+  <div class="bat-bandeau"><div class="bat-titre"></div><div class="bat-total"></div><button class="fermer bat-fermer" aria-label="Sortir">✕</button></div>
+  <p class="bat-desc"></p><div class="bat-defis"></div>
+</div></div>
+<div id="carnet" class="voile cache"><div class="quiz-carte carnet-carte parchemin">
+  <h1 class="titre-or carnet-titre"></h1><p class="carnet-sous"></p>
+  <p class="carnet-note">📜 Carnet de voyage — le village de ce monde est encore en construction : en attendant, choisis une maison ici.</p>
+  <div class="carnet-maisons"></div>
+  <div class="carnet-pied"><button class="bouton-bois carnet-barque" style="font-size:20px;padding:12px 24px">Reprendre la barque de Balthor</button></div>
+</div></div>
+<div id="reglages" class="voile cache"><div class="modal-carte parchemin"><h3>Paramètres</h3><div class="reg-corps"></div><div class="modal-boutons"><button class="brique b-gris reg-fermer">Fermer</button></div></div></div>
+<div id="modal" class="voile cache"><div class="modal-carte parchemin"><h3></h3><div class="modal-corps"></div><div class="modal-boutons"></div></div></div>
+<div id="fondu" class="cache"></div>
+<div id="voyage" class="cache"><div><p class="voyage-texte"></p></div></div>
+<div id="confettis"></div>
+<div id="toast"></div>
+<script src="contenu/ile-depart.js"></script>
+<script src="contenu/enseignes.js"></script>
+<script src="contenu/reglages.js"></script>
+<script src="contenu/monde-maths.js"></script>
+<script src="contenu/monde-francais.js"></script>
+<script src="contenu/monde-eveil.js"></script>
+<script src="donnees/liste.js"></script>
+<script src="astrelune.js"></script>
+</body>
+</html>
