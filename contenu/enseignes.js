@@ -39,4 +39,18 @@ window.ASTRELUNE_ENSEIGNES = {
   'i2-geo':          'La Boussole des Collines',
   'i2-viv':          'Le Jardin des Graines',
   'i2-mat':          'Le Chaudron des Mélanges',
+  // Lacmousse (monde 3) — noms accordés au lac et au métier de l'hôte (02/11/2026, à modifier librement)
+  'n3-nombres':      "L'École des Mille Vagues",        // la maîtresse
+  'n3-calculs':      'Le Coffre du Batelier',          // le banquier
+  'n3-grandeurs':    'La Balance des Pêcheurs',        // la marchande
+  'n3-formes':       "L'Atelier des Pilotis",          // l'architecte
+  'n3-problemes':    'Le Repaire des Brumes',          // la détective
+  'r3-conjugaison':  "L'Horloge des Verbes",           // l'horloger
+  'r3-grammaire':    "L'Établi des Phrases",           // la menuisière
+  'r3-orthographe':  'Le Fil des Mots Justes',         // la couturière
+  'r3-vocabulaire':  'La Bibliothèque des Roseaux',    // le libraire
+  'i3-hist':         'Le Manoir des Temps Anciens',    // la châtelaine
+  'i3-geo':          'La Girouette du Lac',            // le météorologue
+  'i3-viv':          'Le Jardin des Nénuphars',        // la naturaliste
+  'i3-mat':          "L'Atelier des Étincelles",       // l'électricienne
 };
