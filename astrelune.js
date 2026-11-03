@@ -3872,7 +3872,7 @@ uniform sampler2D tHerbe, tPaves, tTerre, tSable, tGalets;`).replace("#include <
             float sat = dd / ( 1.0 - abs( 2.0 * ll - 1.0 ) + 1e-5 );
             float hh = mx == sr.r ? mod( ( sr.g - sr.b ) / ( dd + 1e-5 ), 6.0 ) : ( mx == sr.g ? ( sr.b - sr.r ) / ( dd + 1e-5 ) + 2.0 : ( sr.r - sr.g ) / ( dd + 1e-5 ) + 4.0 );
             hh *= 60.0;
-            float w = smoothstep( uDe.x - 15.0, uDe.x, hh ) * ( 1.0 - smoothstep( uDe.y, uDe.y + 40.0, hh ) ) * smoothstep( 0.12, 0.3, sat ) * step( 0.03, dd );
+            float w = smoothstep( uDe.x - 15.0, uDe.x, hh ) * ( 1.0 - smoothstep( uDe.y, uDe.y + 40.0, hh ) ) * smoothstep( 0.06, 0.2, sat ) * step( 0.03, dd ); // (03/11) seuil de saturation abaiss\xE9 : les bords sombres du toit du nouveau mod\xE8le restaient bleus
             vec3 nv = clamp( uBase * pow( ll / 0.388, 1.6 ), 0.0, 1.0 );
             sr = mix( sr, nv, w );
             texel.rgb = mix( sr / 12.92, pow( ( sr + 0.055 ) / 1.055, vec3( 2.4 ) ), step( 0.04045, sr ) );
