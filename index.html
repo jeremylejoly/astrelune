@@ -190,7 +190,7 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 #confettis i{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:tombe linear forwards}
 @keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
 @media (max-width:620px){.qz-reponses{grid-template-columns:1fr}}
-/* ---- la fin de l'aventure (04/11/2026) : la boussole qui brille, le voyage à travers les quatre mondes, l'écran de fin, le diplôme ---- */
+/* ---- la fin de l'aventure (04/11/2026) : la boussole qui brille, le voyage à travers les quatre mondes, l'écran de fin ---- */
 #boussole.brille,.grande-boussole.brille{animation:brille 2.4s ease-in-out infinite}
 @keyframes brille{0%,100%{filter:drop-shadow(0 0 6px #ffd54a) drop-shadow(0 3px 2px rgba(60,30,0,.55))}50%{filter:drop-shadow(0 0 22px #ffe680) drop-shadow(0 0 40px #ffb300) drop-shadow(0 3px 2px rgba(60,30,0,.55))}}
 .grande-boussole img{width:200px;height:200px;border-radius:50%}
@@ -218,20 +218,6 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 #fin .fin-carte .fin-bilan span{display:flex;justify-content:space-between;gap:8px;background:rgba(255,255,255,.4);border-radius:10px;padding:5px 10px;white-space:nowrap}
 #fin .fin-carte .fin-total{font-size:22px;color:var(--bois);font-weight:700}
 #fin .fin-carte .modal-boutons{margin-top:10px;flex-direction:row;justify-content:center;flex-wrap:wrap}
-/* le diplôme (imprimable) */
-#diplome{position:fixed;inset:0;z-index:33;background:rgba(10,16,48,.92);display:flex;align-items:center;justify-content:center;padding:14px;pointer-events:auto;overflow:auto}
-#diplome .dip-cadre{width:min(900px,100%);max-height:100%;overflow-y:auto;background:radial-gradient(ellipse at 50% 40%,#fdf6e3,#f1dfb3 75%,#e4cb95);border:10px double var(--or);outline:5px solid var(--bois);border-radius:8px;padding:26px 32px;text-align:center;color:var(--encre);font-family:Andika,system-ui;position:relative}
-#diplome .dip-titre{font-family:Conte,serif;font-size:clamp(30px,5vw,48px);color:var(--bois);margin:6px 0 0}
-#diplome .dip-sous{font-family:Conte,serif;font-size:20px;color:#8a5f06;letter-spacing:2px;text-transform:uppercase}
-#diplome .dip-nom{font-family:Conte,serif;font-size:clamp(34px,6vw,56px);color:var(--ruban);margin:10px 0 4px}
-#diplome .dip-texte{font-size:18px;line-height:1.55;max-width:620px;margin:0 auto}
-#diplome .dip-boussole{width:140px;height:140px;margin:8px auto;display:block}
-#diplome .dip-mondes{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:12px 0}
-#diplome .dip-mondes span{background:rgba(255,255,255,.5);border:2px solid var(--or);border-radius:12px;padding:6px 12px;font-weight:700;color:var(--bois);font-size:16px}
-#diplome .dip-pied{display:flex;justify-content:space-between;gap:20px;margin-top:22px;font-size:15px;color:#6b4a26}
-#diplome .dip-pied span{flex:1;border-top:2px solid var(--bois);padding-top:6px}
-#diplome .dip-boutons{display:flex;gap:12px;justify-content:center;margin-top:18px}
-@media print{body>*:not(#diplome){display:none!important}#diplome{position:static;background:none;padding:0;display:block}#diplome .dip-cadre{max-height:none;overflow:visible;width:100%;border-color:#b8902a;outline-color:#7a4a22;background:#fff9ea}#diplome .dip-boutons{display:none}@page{size:A4 landscape;margin:12mm}}
 </style>
 </head>
 <body>
@@ -290,7 +276,6 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 <div id="fondu" class="cache"></div>
 <div id="voyage" class="cache"><div><p class="voyage-texte"></p></div></div>
 <div id="fin" class="cache"></div>
-<div id="diplome" class="cache"></div>
 <div id="confettis"></div>
 <div id="toast"></div>
 <script src="contenu/ile-depart.js"></script>
@@ -300,6 +285,6 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 <script src="contenu/monde-francais.js"></script>
 <script src="contenu/monde-eveil.js"></script>
 <script src="donnees/liste.js"></script>
-<script src="astrelune.js?v=249b60e6d3"></script>
+<script src="astrelune.js?v=b863eff949"></script>
 </body>
 </html>
