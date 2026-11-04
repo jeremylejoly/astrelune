@@ -112,8 +112,14 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 .qz-retour,.mj-retour{margin-top:16px;font-size:19px;line-height:1.45;font-weight:400;border-radius:14px}
 .qz-retour b,.mj-retour b{font-weight:700}
 .qz-retour.bien,.qz-retour.oups,.mj-retour.bien,.mj-retour.oups{padding:12px 16px}
-.qz-retour.bien,.mj-retour.bien{background:#e3f6e5;color:#1f6e2c}
-.qz-retour.oups,.mj-retour.oups{background:#fdeedb;color:#8a4b08}
+.qz-retour.bien,.mj-retour.bien{background:#dff5e1;color:#1f6e2c;border:3px solid #2b8a3e;animation:pop .35s}
+.qz-retour.oups,.mj-retour.oups{background:#fde2dc;color:#8a2a1e;border:3px solid #c0392b;animation:secoue .45s}
+.qz-retour.oups .expl,.mj-retour.oups .expl{color:#5a3a2e}
+@keyframes secoue{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.qz-champ.bonne{border-color:#2b8a3e;background:#e3f6e5;color:#1f6e2c}
+.qz-champ.mauvaise{border-color:#c0392b;background:#fde2dc;color:#8a2a1e;text-decoration:line-through}
+.brique.b-orange{background:linear-gradient(#f0923c,#d9731c);box-shadow:0 5px 0 #9a4e0e}
+.brique.b-orange:active{box-shadow:0 2px 0 #9a4e0e}
 .expl{color:#4a3a28}
 .qz-continuer{margin-top:18px;width:100%}
 /* boutons des fenêtres (noms de classes repris de la v0.18) */
@@ -285,6 +291,6 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 <script src="contenu/monde-francais.js"></script>
 <script src="contenu/monde-eveil.js"></script>
 <script src="donnees/liste.js"></script>
-<script src="astrelune.js?v=b863eff949"></script>
+<script src="astrelune.js?v=acbef85147"></script>
 </body>
 </html>
