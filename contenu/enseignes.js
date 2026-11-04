@@ -53,4 +53,18 @@ window.ASTRELUNE_ENSEIGNES = {
   'i3-geo':          'La Girouette du Lac',            // le météorologue
   'i3-viv':          'Le Jardin des Nénuphars',        // la naturaliste
   'i3-mat':          "L'Atelier des Étincelles",       // l'électricienne
+  // Cimeclaire (monde 4) — noms accordés à la montagne et au métier de l'hôte (04/11/2026, à modifier librement)
+  'n4-nombres':      "L'Observatoire des Mille Étoiles", // l'astronome (au sommet)
+  'n4-calculs':      'Le Coffre des Cimes',             // la banquière
+  'n4-grandeurs':    'La Balance de la Fromagère',      // la fromagère
+  'n4-formes':       "L'Atelier du Bois Sculpté",       // le sculpteur sur bois
+  'n4-problemes':    'Le Repaire des Sommets',          // le juge
+  'r4-conjugaison':  "L'Antiquaire des Verbes",         // l'antiquaire
+  'r4-grammaire':    'La Vigie des Phrases',            // le guetteur
+  'r4-orthographe':  "L'École des Mots Justes",         // le maitre
+  'r4-vocabulaire':  'Le Chalet des Mille Mots',        // la poétesse
+  'i4-hist':         'Le Grenier des Temps Anciens',    // l'historien
+  'i4-geo':          'Le Refuge des Quatre Vents',      // la gardienne du refuge
+  'i4-viv':          'Le Cabinet du Docteur des Cimes',  // le médecin
+  'i4-mat':          "L'Atelier des Rouages Gelés",     // l'ingénieur
 };

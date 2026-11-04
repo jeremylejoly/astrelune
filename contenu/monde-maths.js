@@ -331,7 +331,7 @@ window.MDB_CONTENU.briqueville = {
         { nom: "Le juge Thémis", lignes: ["L'agence des problèmes est {b:n4-problemes}.", "Ses problèmes ressemblent à ceux de l'épreuve de fin de primaire."], indice: "Agence des problèmes : {b:n4-problemes}." }
       ],
       batiments: [
-        { id: "n4-nombres", matiere: "Nombres", titre: "L'école des nombres", symbole: "#", hote: { nom: "Le directeur Lambert", genre: "garcon" },
+        { id: "n4-nombres", matiere: "Nombres", titre: "L'école des nombres", symbole: "#", hote: { nom: "L'astronome Vesperin", genre: "garcon" },
           description: "Fractions, décimaux et pourcentages : passer d'une écriture à l'autre.",
           defis: [
             { id: "m4-ecritures", titre: "Fraction, décimal, pourcentage", type: "quiz", gen: ["ecritures"], nombreNecessaire: 6 },
@@ -344,14 +344,14 @@ window.MDB_CONTENU.briqueville = {
             { id: "m4-fractions", titre: "Fractions et pourcentages", type: "quiz", gen: ["calcFractions", "calcPourcent"], nombreNecessaire: 5 },
             { id: "m4-chaines", titre: "Chaines de calculs et priorités", type: "quiz", gen: ["calcChaine", "calcPriorites"], nombreNecessaire: 5 }
           ] },
-        { id: "n4-grandeurs", matiere: "Grandeurs", titre: "Le marché des mesures", symbole: "m", hote: { nom: "Le marchand Grainelot", genre: "garcon" },
+        { id: "n4-grandeurs", matiere: "Grandeurs", titre: "Le marché des mesures", symbole: "m", hote: { nom: "La fromagère Odalys", genre: "fille" },
           description: "Aires de toutes les figures, volumes et échelles.",
           defis: [
             { id: "m4-aires", titre: "Aires et unités d'aire", type: "quiz", gen: ["grAiresFig", "grConvAires"], nombreNecessaire: 5 },
             { id: "m4-volumes", titre: "Volumes du cube et du parallélépipède rectangle", type: "quiz", gen: ["grVolumes"], nombreNecessaire: 5 },
             { id: "m4-echelles", titre: "Échelles et conversions", type: "quiz", gen: ["grEchelles", "grConv"], nombreNecessaire: 5 }
           ] },
-        { id: "n4-formes", matiere: "Solides et figures", titre: "L'atelier des formes", symbole: "△", hote: { nom: "L'architecte Anouk", genre: "fille" },
+        { id: "n4-formes", matiere: "Solides et figures", titre: "L'atelier des formes", symbole: "△", hote: { nom: "Le sculpteur Thorvin", genre: "garcon" },
           description: "Angles manquants, agrandissements, repérage et solides.",
           defis: [
             { id: "m4-angles", titre: "Calculer un angle manquant", type: "quiz", gen: ["sfAngleManquant"], nombreNecessaire: 5 },
