@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Astrelune — Tableau de bord</title>
+<!-- (06/11/2026) Tableau de bord de l'enseignant : la progression de chaque élève dans Les Chroniques d'Astrelune.
+     Ouvert par LCML (onglet Astrelune, espace enseignant) dans un cadre : tableau.html?cls=lejoly&classes=lejoly:Mr Lejoly,verryken:Mr Verryken
+     Les parties sont lues dans le Firebase du site (game_progress/classe/élève/astrelune) par la fonction FB_loadClassGameProgress du site.
+     tableau.html?demo=1 : une classe inventée, pour voir le tableau sans le site. -->
+<style>
+@font-face { font-family: 'Fredoka'; src: url('polices/fredoka-latin-600-normal.woff2') format('woff2'); font-weight: 600; }
+@font-face { font-family: 'Nunito'; src: url('polices/nunito-latin-800-normal.woff2') format('woff2'); font-weight: 800; }
+@font-face { font-family: 'Andika'; src: url('polices/andika-latin-400-normal.woff2') format('woff2'); font-weight: 400; }
+@font-face { font-family: 'Andika'; src: url('polices/andika-latin-700-normal.woff2') format('woff2'); font-weight: 700; }
+@font-face { font-family: 'Eagle Lake'; src: url('polices/eagle-lake-latin-400-normal.woff2') format('woff2'); }
+:root {
+  --fond: #f6f4ef; --carte: #ffffff; --bord: #e6e1d6; --texte: #2b2a27; --doux: #77736a; --or: #c99a2e; --or-clair: #fff4d6;
+  --maths: #2f6fd6; --francais: #c0392b; --eveil: #2b8a3e; --nuit: #1f2a5c;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fond); color: var(--texte); font: 15px/1.45 'Andika', system-ui, sans-serif; }
+.page { max-width: 1180px; margin: 0 auto; padding: 18px 16px 40px; }
+header { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+header img { width: 56px; height: 56px; }
+header h1 { font: 400 26px/1.1 'Eagle Lake', serif; color: var(--nuit); margin: 0; }
+header .sous { color: var(--doux); font-size: 13px; }
+header .actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+select, button { font: 600 14px 'Fredoka', sans-serif; border-radius: 12px; border: 1.5px solid var(--bord); background: var(--carte); color: var(--texte); padding: 8px 12px; cursor: pointer; }
+button.principal { background: var(--nuit); color: #fff; border-color: var(--nuit); }
+button:disabled { opacity: .5; cursor: default; }
+.resume { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.tuile { background: var(--carte); border: 1px solid var(--bord); border-radius: 18px; padding: 12px 14px; }
+.tuile b { display: block; font: 600 26px 'Fredoka', sans-serif; color: var(--nuit); }
+.tuile span { color: var(--doux); font-size: 13px; }
+.onglets { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.onglets button { border-radius: 999px; }
+.onglets button.actif { background: var(--nuit); color: #fff; border-color: var(--nuit); }
+.cadre { background: var(--carte); border: 1px solid var(--bord); border-radius: 20px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 760px; }
+th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid #f0ece3; vertical-align: middle; }
+th { font: 600 13px 'Fredoka', sans-serif; color: var(--doux); background: #fbfaf7; position: sticky; top: 0; cursor: pointer; user-select: none; white-space: nowrap; }
+th.tri::after { content: ' ▾'; } th.tri.haut::after { content: ' ▴'; }
+tr.eleve { cursor: pointer; } tr.eleve:hover td { background: #fffbf0; }
+tr.pas-commence td { color: #b3aea4; }
+tr.moyenne td { font-weight: 700; background: #fbfaf7; border-top: 2px solid var(--bord); }
+.nom { font: 600 15px 'Fredoka', sans-serif; }
+.perso { font-size: 18px; }
+.mondes { display: inline-flex; gap: 3px; }
+.mondes i { width: 14px; height: 14px; border-radius: 50%; background: #ece8de; display: inline-block; }
+.mondes i.ok { background: var(--or); }
+.barre { position: relative; height: 10px; border-radius: 6px; background: #efebe2; overflow: hidden; min-width: 90px; }
+.barre > i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; }
+.chiffre { font: 600 13px 'Fredoka', sans-serif; white-space: nowrap; }
+.cellule-mat .chiffre { min-width: 74px; text-align: right; }
+.cellule-mat { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.etiquette { display: inline-block; padding: 2px 8px; border-radius: 999px; font: 600 12px 'Fredoka', sans-serif; white-space: nowrap; }
+.e-fin { background: var(--or-clair); color: #8a6410; }
+.e-nuit { background: #e7ebfb; color: var(--nuit); }
+.e-rien { background: #f1efe9; color: #9a958b; }
+.faible { color: #b4521b; }
+.aide { color: var(--doux); font-size: 13px; margin: 10px 4px; }
+.vide { padding: 40px 20px; text-align: center; color: var(--doux); }
+.demo { background: #fff2cc; border: 1px solid #f0d68a; color: #7a5c00; border-radius: 12px; padding: 8px 12px; margin-bottom: 12px; font-size: 13px; }
+/* fiche d'un élève */
+#fiche { position: fixed; inset: 0; background: rgba(30, 28, 22, .35); display: none; align-items: flex-start; justify-content: center; padding: 24px 12px; overflow-y: auto; z-index: 10; }
+#fiche.vu { display: flex; }
+#fiche .boite { background: var(--carte); border-radius: 22px; max-width: 980px; width: 100%; padding: 18px 18px 22px; box-shadow: 0 20px 60px rgba(0, 0, 0, .25); }
+#fiche h2 { font: 600 22px 'Fredoka', sans-serif; margin: 0 0 4px; color: var(--nuit); }
+#fiche .fermer { float: right; }
+.grille { display: grid; grid-template-columns: 110px repeat(3, 1fr); gap: 6px; margin: 14px 0; }
+.grille > div { background: #faf8f3; border-radius: 12px; padding: 8px 10px; }
+.grille .tete { background: none; font: 600 13px 'Fredoka', sans-serif; color: var(--doux); padding: 4px 10px; }
+.maison { margin-top: 12px; }
+.maison h3 { font: 600 15px 'Fredoka', sans-serif; margin: 0 0 4px; }
+.maison h3 small { color: var(--doux); font-weight: 400; font-family: 'Andika', sans-serif; }
+.defi { display: grid; grid-template-columns: 1fr 70px 90px 110px; gap: 8px; padding: 4px 8px; border-radius: 8px; font-size: 14px; }
+.defi:nth-child(even) { background: #faf8f3; }
+.etoiles { color: var(--or); letter-spacing: 1px; white-space: nowrap; }
+.etoiles .off { color: #ddd6c6; }
+@media (max-width: 640px) { header h1 { font-size: 21px; } .grille { grid-template-columns: 80px repeat(3, 1fr); font-size: 13px; } .defi { grid-template-columns: 1fr 60px; } .defi .x { display: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <img src="images/logo-astrelune.png" alt="" onerror="this.src='images/boussole-or.png'">
+    <div><h1>Les Chroniques d'Astrelune</h1><div class="sous">Tableau de bord de l'enseignant</div></div>
+    <div class="actions">
+      <select id="classe" aria-label="Classe"></select>
+      <button id="csv">⬇ Exporter (tableur)</button>
+      <button id="actualiser" class="principal">↻ Actualiser</button>
+    </div>
+  </header>
+  <div id="demo" class="demo" hidden>Données de démonstration (classe inventée). Dans LCML, ce tableau affiche les parties réelles des élèves.</div>
+  <div class="resume" id="resume"></div>
+  <div class="onglets" id="onglets">
+    <button data-vue="progression" class="actif">Progression</button>
+    <button data-vue="matieres">Résultats par matière</button>
+  </div>
+  <div class="cadre" id="cadre"><div class="vide">Chargement…</div></div>
+  <p class="aide" id="aide"></p>
+</div>
+<div id="fiche"><div class="boite" id="ficheBoite"></div></div>
+
+<script src="contenu/ile-depart.js"></script>
+<script src="contenu/enseignes.js"></script>
+<script src="contenu/monde-maths.js"></script>
+<script src="contenu/monde-francais.js"></script>
+<script src="contenu/monde-eveil.js"></script>
+<script>
+(() => {
+  // ---------- le catalogue des défis (mêmes règles que le jeu : pedagogie.js maisonsDuMonde, aventure.js maisonsIle) ----------
+  const MATIERES = { maths: { cle: 'briqueville', nom: 'Maths', c: 'var(--maths)', icone: '➗' }, francais: { cle: 'francais', nom: 'Français', c: 'var(--francais)', icone: '✒️' }, eveil: { cle: 'eveil', nom: 'Éveil', c: 'var(--eveil)', icone: '🧭' } };
+  const MONDES = ['L\'île d\'Aora', 'Rivebelle', 'Rondecolline', 'Lacmousse', 'Cimeclaire'];
+  const C = window.MDB_CONTENU || {}, ENS = window.ASTRELUNE_ENSEIGNES || {}, ILE = window.ASTRELUNE_ILE || {};
+  const CAT = { mondes: [], defis: {} };
+  for (let k = 1; k <= 4; k++) {
+    const maisons = [];
+    for (const [mat, M] of Object.entries(MATIERES)) {
+      const u = C[M.cle]; if (!u || !u.quartiers) continue;
+      const q = u.quartiers.find((x) => x.niveau === k) || u.quartiers[k - 1]; if (!q) continue;
+      for (const b of q.batiments) { const m = { id: b.id, nom: ENS[b.id] || b.titre, sujet: b.matiere || '', mat, k, defis: b.defis.map((d) => ({ id: d.id, titre: d.titre, mat, k })) }; maisons.push(m); m.defis.forEach((d) => { CAT.defis[d.id] = d; }); }
+    }
+    CAT.mondes[k] = maisons;
+  }
+  const ileMaisons = (ILE.maisons || []).map((b) => ({ id: b.id, nom: b.titre, mat: b.mat || 'eveil', defis: (b.defis || []).map((d) => d.id) }));
+
+  // ---------- les données ----------
+  const Q = new URLSearchParams(location.search), DEMO = Q.has('demo');
+  const parent = (() => { try { return window.parent !== window ? window.parent : null; } catch (e) { return null; } })();
+  const classes = (Q.get('classes') || '').split(',').filter(Boolean).map((x) => { const [id, ...n] = x.split(':'); return { id, nom: n.join(':') || id }; });
+  let cls = Q.get('cls') || (classes[0] && classes[0].id) || 'lejoly';
+  if (!classes.length) classes.push({ id: cls, nom: cls });
+  const sel = document.getElementById('classe');
+  sel.innerHTML = classes.map((c) => `<option value="${c.id}">${c.nom}</option>`).join(''); sel.value = cls; sel.hidden = classes.length < 2;
+  sel.onchange = () => { cls = sel.value; charger(); };
+
+  async function lireParties() {
+    if (DEMO) return demo();
+    if (!parent || typeof parent.FB_loadClassGameProgress !== 'function') throw new Error('Ce tableau s\'ouvre depuis LCML (espace enseignant, onglet Astrelune).');
+    const brut = (await parent.FB_loadClassGameProgress(cls, 'astrelune')) || {};
+    let noms = []; try { noms = (parent.getClassStudents ? parent.getClassStudents(cls) : []).map((s) => s.name).filter(Boolean); } catch (e) {}
+    const out = {}; for (const n of noms) out[n] = null; for (const [n, p] of Object.entries(brut)) out[n] = p; return out;
+  }
+
+  // ---------- les calculs pour un élève ----------
+  const et = (P, id) => (P && P.defis && P.defis[id] && P.defis[id].etoiles) || 0;
+  function bilan(nom, P) {
+    const ok = !!(P && P.genre && !P.efface);
+    const b = { nom, P: ok ? P : null, ok, mat: {}, monde: [], total: 0, max: 0, reussis: 0, nbDefis: 0, essais: 0 };
+    for (const m of Object.keys(MATIERES)) b.mat[m] = { et: 0, max: 0, reussis: 0, n: 0 };
+    for (let k = 1; k <= 4; k++) {
+      const parMat = {}; for (const m of Object.keys(MATIERES)) parMat[m] = { et: 0, max: 0 };
+      for (const mais of CAT.mondes[k]) for (const d of mais.defis) {
+        const e = et(b.P, d.id); parMat[d.mat].et += e; parMat[d.mat].max += 3;
+        b.mat[d.mat].et += e; b.mat[d.mat].max += 3; b.mat[d.mat].n++; if (e >= 1) b.mat[d.mat].reussis++;
+        b.total += e; b.max += 3; b.nbDefis++; if (e >= 1) b.reussis++;
+        if (b.P && b.P.defis && b.P.defis[d.id]) b.essais += b.P.defis[d.id].essais || 0;
+      }
+      b.monde[k] = parMat;
+    }
+    b.ile = ileMaisons.filter((m) => m.defis.some((id) => et(b.P, id) >= 1)).length + (b.P && b.P.vus && b.P.vus['defi-lina'] ? 1 : 0);
+    b.ileMax = ileMaisons.length + 1;
+    b.mondeMax = b.P ? (b.P.mondeMax || 0) : 0; b.fin = b.P ? (b.P.fin || 0) : 0; b.or = b.P ? (b.P.or || 0) : 0;
+    b.lieu = b.P ? (b.P.lieu || 0) : null; b.maj = b.P ? (b.P.maj || 0) : 0; b.genre = b.P ? b.P.genre : null;
+    return b;
+  }
+
+  // ---------- affichage ----------
+  const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const quand = (t) => { if (!t) return '—'; const j = Math.floor((Date.now() - t) / 864e5); if (j <= 0) return 'aujourd\'hui'; if (j === 1) return 'hier'; if (j < 7) return `il y a ${j} jours`; return new Date(t).toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' }); };
+  const barre = (a, b, c) => `<div class="cellule-mat"><div class="barre"><i style="width:${pct(a, b)}%;background:${c}"></i></div><span class="chiffre">${a} / ${b}</span></div>`;
+  const etoiles = (n, max = 3) => `<span class="etoiles">${'★'.repeat(n)}<span class="off">${'★'.repeat(Math.max(0, max - n))}</span></span>`;
+  const etat = (b) => !b.ok ? '<span class="etiquette e-rien">Pas commencé</span>' : b.fin >= 2 ? '<span class="etiquette e-fin">🏆 Fin du jeu</span>' : b.fin === 1 ? '<span class="etiquette e-nuit">✨ Boussole réparée</span>' : `<span class="etiquette e-rien">${b.mondeMax ? 'En voyage' : 'Sur l\'île'}</span>`;
+  const mondes = (b) => `<span class="mondes" title="${b.mondeMax} monde(s) atteint(s) sur 4">${[1, 2, 3, 4].map((k) => `<i class="${b.mondeMax >= k ? 'ok' : ''}"></i>`).join('')}</span>`;
+
+  let LISTE = [], VUE = 'progression', TRI = { cle: 'nom', haut: true };
+  const COLS = {
+    progression: [
+      ['nom', 'Élève', (b) => b.nom], ['lieu', 'Où il est', (b) => b.lieu ?? -1], ['mondeMax', 'Mondes atteints', (b) => b.mondeMax], ['ile', 'Île', (b) => b.ile],
+      ['total', 'Étoiles', (b) => b.total], ['or', 'Pièces', (b) => b.or], ['fin', 'Étape', (b) => (b.ok ? 1 : 0) + b.fin + b.mondeMax / 10], ['maj', 'Dernière partie', (b) => b.maj],
+    ],
+    matieres: [['nom', 'Élève', (b) => b.nom], ...Object.entries(MATIERES).map(([m, M]) => [m, `${M.icone} ${M.nom}`, (b) => pct(b.mat[m].et, b.mat[m].max)]), ['reussis', 'Défis réussis', (b) => b.reussis]],
+  };
+  function ligne(b) {
+    const cls = b.ok ? 'eleve' : 'eleve pas-commence';
+    const perso = b.genre === 'fille' ? '👧' : b.genre === 'garcon' ? '👦' : '';
+    if (VUE === 'progression') return `<tr class="${cls}" data-nom="${esc(b.nom)}"><td><span class="perso">${perso}</span> <span class="nom">${esc(b.nom)}</span></td>
+      <td>${b.ok ? esc(MONDES[b.lieu] || '—') : '—'}</td><td>${mondes(b)}</td><td class="chiffre">${b.ok ? b.ile + ' / ' + b.ileMax : '—'}</td>
+      <td>${barre(b.total, b.max, 'var(--or)')}</td><td class="chiffre">${b.ok ? '🪙 ' + b.or : '—'}</td><td>${etat(b)}</td><td>${quand(b.maj)}</td></tr>`;
+    return `<tr class="${cls}" data-nom="${esc(b.nom)}"><td><span class="perso">${perso}</span> <span class="nom">${esc(b.nom)}</span></td>
+      ${Object.entries(MATIERES).map(([m, M]) => `<td>${barre(b.mat[m].et, b.mat[m].max, M.c)}</td>`).join('')}<td class="chiffre">${b.reussis} / ${b.nbDefis}</td></tr>`;
+  }
+  function afficher() {
+    const cadre = document.getElementById('cadre'), aide = document.getElementById('aide');
+    if (!LISTE.length) { cadre.innerHTML = '<div class="vide">Aucun élève dans cette classe pour l\'instant.</div>'; return; }
+    const cols = COLS[VUE], col = cols.find((c) => c[0] === TRI.cle) || cols[0];
+    const tries = LISTE.slice().sort((a, b) => { const x = col[2](a), y = col[2](b); const r = typeof x === 'string' ? x.localeCompare(y, 'fr') : x - y; return TRI.haut ? r : -r; });
+    const ok = LISTE.filter((b) => b.ok);
+    let moy = '';
+    if (ok.length) {
+      const m = (f) => Math.round(ok.reduce((a, b) => a + f(b), 0) / ok.length);
+      moy = VUE === 'progression'
+        ? `<tr class="moyenne"><td>Moyenne (${ok.length} élève${ok.length > 1 ? 's' : ''})</td><td></td><td class="chiffre">${(ok.reduce((a, b) => a + b.mondeMax, 0) / ok.length).toFixed(1)} / 4</td><td class="chiffre">${(ok.reduce((a, b) => a + b.ile, 0) / ok.length).toFixed(1)}</td><td>${barre(m((b) => b.total), ok[0].max, 'var(--or)')}</td><td class="chiffre">🪙 ${m((b) => b.or)}</td><td></td><td></td></tr>`
+        : `<tr class="moyenne"><td>Moyenne de la classe</td>${Object.entries(MATIERES).map(([k, M]) => `<td>${barre(m((b) => b.mat[k].et), ok[0].mat[k].max, M.c)}</td>`).join('')}<td class="chiffre">${m((b) => b.reussis)} / ${ok[0].nbDefis}</td></tr>`;
+    }
+    cadre.innerHTML = `<table><thead><tr>${cols.map((c) => `<th data-cle="${c[0]}" class="${c[0] === TRI.cle ? 'tri' + (TRI.haut ? ' haut' : '') : ''}">${c[1]}</th>`).join('')}</tr></thead><tbody>${tries.map(ligne).join('')}${moy}</tbody></table>`;
+    cadre.querySelectorAll('th').forEach((th) => { th.onclick = () => { const k = th.dataset.cle; TRI = { cle: k, haut: TRI.cle === k ? !TRI.haut : k === 'nom' }; afficher(); }; });
+    cadre.querySelectorAll('tr.eleve').forEach((tr) => { tr.onclick = () => ouvrirFiche(LISTE.find((b) => b.nom === tr.dataset.nom)); });
+    aide.textContent = VUE === 'progression'
+      ? 'Étoiles : celles des 4 mondes (3 par défi). Île : les 3 questions d\'Aora et les 4 maisons de l\'île. Clique sur un élève pour voir le détail de ses défis.'
+      : 'Pour chaque matière : les étoiles gagnées sur le total possible dans les 4 mondes. Clique sur un élève pour voir le détail, monde par monde.';
+  }
+  function resume() {
+    const ok = LISTE.filter((b) => b.ok), r = document.getElementById('resume');
+    const actifs = ok.filter((b) => Date.now() - b.maj < 7 * 864e5).length;
+    const fin = ok.filter((b) => b.fin >= 2).length;
+    const moyEt = ok.length ? Math.round(ok.reduce((a, b) => a + pct(b.total, b.max), 0) / ok.length) : 0;
+    r.innerHTML = `<div class="tuile"><b>${ok.length} / ${LISTE.length}</b><span>élèves ont commencé</span></div>
+      <div class="tuile"><b>${actifs}</b><span>ont joué cette semaine</span></div>
+      <div class="tuile"><b>${moyEt} %</b><span>des étoiles, en moyenne</span></div>
+      <div class="tuile"><b>${fin}</b><span>ont terminé le jeu</span></div>`;
+  }
+  function ouvrirFiche(b) {
+    if (!b) return;
+    const f = document.getElementById('fiche'), bx = document.getElementById('ficheBoite');
+    if (!b.ok) { bx.innerHTML = `<button class="fermer">✕</button><h2>${esc(b.nom)}</h2><p>Pas encore de partie dans Astrelune.</p>`; }
+    else {
+      const P = b.P;
+      const grille = `<div class="grille"><div class="tete"></div>${Object.values(MATIERES).map((M) => `<div class="tete">${M.icone} ${M.nom}</div>`).join('')}
+        ${[1, 2, 3, 4].map((k) => `<div class="tete">${MONDES[k]}${b.mondeMax >= k ? '' : ' 🔒'}</div>${Object.entries(MATIERES).map(([m, M]) => `<div>${barre(b.monde[k][m].et, b.monde[k][m].max, M.c)}</div>`).join('')}`).join('')}</div>`;
+      let detail = '';
+      for (let k = 1; k <= Math.max(1, b.mondeMax); k++) {
+        detail += `<h3 style="font:600 17px Fredoka,sans-serif;margin:18px 0 4px;color:var(--nuit)">${MONDES[k]}</h3>`;
+        for (const m of CAT.mondes[k]) {
+          detail += `<div class="maison"><h3><span style="color:${MATIERES[m.mat].c}">${MATIERES[m.mat].icone}</span> ${esc(m.nom)} <small>— ${esc(m.sujet)}</small></h3>`;
+          for (const d of m.defis) {
+            const r = (P.defis || {})[d.id] || {};
+            detail += `<div class="defi"><span>${esc(d.titre)}</span>${etoiles(r.etoiles || 0)}<span class="x">${r.essais ? r.essais + ' essai' + (r.essais > 1 ? 's' : '') : '<span style="color:#b3aea4">pas essayé</span>'}</span><span class="x">${r.dernier ? quand(Date.parse(r.dernier)) : ''}</span></div>`;
+          }
+          detail += '</div>';
+        }
+      }
+      bx.innerHTML = `<button class="fermer">✕ Fermer</button><h2>${b.genre === 'fille' ? '👧' : '👦'} ${esc(b.nom)}</h2>
+        <div>${etat(b)} · ${esc(MONDES[b.lieu] || '')} · ${b.total} ★ sur ${b.max} · 🪙 ${b.or} · île ${b.ile} / ${b.ileMax} · dernière partie ${quand(b.maj)}</div>
+        ${grille}${detail}`;
+    }
+    bx.querySelector('.fermer').onclick = () => f.classList.remove('vu');
+    f.onclick = (e) => { if (e.target === f) f.classList.remove('vu'); };
+    f.classList.add('vu'); f.scrollTop = 0;
+  }
+  document.getElementById('onglets').querySelectorAll('button').forEach((bt) => { bt.onclick = () => { VUE = bt.dataset.vue; document.querySelectorAll('#onglets button').forEach((x) => x.classList.toggle('actif', x === bt)); if (!COLS[VUE].some((c) => c[0] === TRI.cle)) TRI = { cle: 'nom', haut: true }; afficher(); }; });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.getElementById('fiche').classList.remove('vu'); });
+
+  // ---------- export pour un tableur (CSV, séparateur ; pour Excel en français) ----------
+  document.getElementById('csv').onclick = () => {
+    const t = [['Élève', 'Commencé', 'Lieu actuel', 'Mondes atteints', 'Île (sur ' + (ileMaisons.length + 1) + ')', 'Étoiles', 'Étoiles max', 'Pièces', 'Étape', ...Object.values(MATIERES).flatMap((M) => [M.nom + ' étoiles', M.nom + ' max']), 'Défis réussis', 'Dernière partie']];
+    for (const b of LISTE.slice().sort((x, y) => x.nom.localeCompare(y.nom, 'fr'))) t.push([b.nom, b.ok ? 'oui' : 'non', b.ok ? MONDES[b.lieu] : '', b.mondeMax, b.ile, b.total, b.max, b.or, !b.ok ? '' : b.fin >= 2 ? 'fin du jeu' : b.fin === 1 ? 'boussole réparée' : 'en cours', ...Object.keys(MATIERES).flatMap((m) => [b.mat[m].et, b.mat[m].max]), b.reussis, b.maj ? new Date(b.maj).toLocaleString('fr-BE') : '']);
+    const csv = '﻿' + t.map((r) => r.map((v) => /[;"\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : v).join(';')).join('\r\n');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = `astrelune-${cls}-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+  };
+
+  async function charger() {
+    const bt = document.getElementById('actualiser'); bt.disabled = true;
+    document.getElementById('demo').hidden = !DEMO;
+    try {
+      const parties = await lireParties();
+      LISTE = Object.entries(parties).map(([n, P]) => bilan(n, P));
+      resume(); afficher();
+    } catch (e) {
+      document.getElementById('cadre').innerHTML = `<div class="vide">${esc(e.message || e)}</div>`; document.getElementById('resume').innerHTML = '';
+    }
+    bt.disabled = false;
+  }
+  document.getElementById('actualiser').onclick = charger;
+
+  // ---------- démonstration (?demo=1) : une classe inventée ----------
+  function demo() {
+    const noms = ['Amina', 'Bastien', 'Chloé', 'Dylan', 'Elif', 'Félix', 'Giulia', 'Hugo', 'Inès', 'Jules', 'Kenza', 'Louis', 'Maëlle', 'Noah', 'Olivia', 'Rayan', 'Sofia', 'Théo'];
+    let g = 11; const al = () => { g = (g * 16807) % 2147483647; return g / 2147483647; };
+    const out = {};
+    noms.forEach((n, i) => {
+      if (i % 9 === 4) { out[n] = null; return; }
+      const niveau = al(), mondeMax = Math.min(4, Math.floor(niveau * 5)), defis = {};
+      for (let k = 1; k <= mondeMax; k++) for (const m of CAT.mondes[k]) for (const d of m.defis) {
+        const force = { maths: 0.4 + al() * 0.6, francais: 0.3 + al() * 0.7, eveil: 0.5 + al() * 0.5 }[d.mat];
+        if (al() < (k < mondeMax ? 0.95 : 0.6)) { const e = al() < force ? (al() < force * 0.8 ? 3 : 2) : (al() < 0.8 ? 1 : 0); defis[d.id] = { etoiles: e, essais: e + Math.floor(al() * 3), dernier: new Date(Date.now() - al() * 12 * 864e5).toISOString() }; }
+      }
+      for (const m of ileMaisons) for (const id of m.defis) defis[id] = { etoiles: 1, essais: 1 };
+      const fin = mondeMax === 4 && niveau > 0.9 ? 2 : mondeMax === 4 && niveau > 0.85 ? 1 : 0;
+      out[n] = { genre: i % 2 ? 'garcon' : 'fille', prenom: n, mondeMax, fin, lieu: Math.max(0, mondeMax - (al() < 0.3 ? 1 : 0)), or: Math.floor(al() * 120), defis, vus: { 'defi-lina': 1 }, maj: Date.now() - al() * 10 * 864e5 };
+    });
+    return out;
+  }
+  charger();
+})();
+</script>
+</body>
+</html>
