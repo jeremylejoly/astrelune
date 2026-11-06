@@ -1,5 +1,5 @@
 /* =====================================================================
-   LES CHRONIQUES D'ASTRELUNE — LES NOMS DES MAISONS (modifiable par l'enseignant)
+   ASTRELUNE — LES NOMS DES MAISONS (modifiable par l'enseignant)
    ---------------------------------------------------------------------
    Le nom écrit sur le panneau devant chaque maison, sur l'enseigne à
    l'intérieur et dans la bouche de l'hôte. Une maison sans nom ici garde

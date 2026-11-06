@@ -1,4 +1,4 @@
-// Les Chroniques d'Astrelune — service worker (04/11/2026) : garde sur l'appareil les fichiers de données versionnés
+// Astrelune — service worker (04/11/2026) : garde sur l'appareil les fichiers de données versionnés
 // (donnees/*.js?v=empreinte et donnees-leger/…). Une nouvelle version d'un fichier a une autre empreinte, donc une autre
 // adresse : jamais de vieille version. Tout le reste (index.html, astrelune.js, contenu) passe par le réseau comme avant.
 const CACHE = 'astrelune-donnees-v1';

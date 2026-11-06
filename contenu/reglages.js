@@ -1,5 +1,5 @@
 /* =====================================================================
-   LES CHRONIQUES D'ASTRELUNE — RÉGLAGES DE L'ENSEIGNANT (modifiable)
+   ASTRELUNE — RÉGLAGES DE L'ENSEIGNANT (modifiable)
    ---------------------------------------------------------------------
    codeEnseignant : le code demandé pour ouvrir l'espace enseignant
    (bouton ⚙ en bas à droite → Espace enseignant). Change-le avant de

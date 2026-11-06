@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Les Chroniques d'Astrelune — la place du village</title>
+<title>Astrelune — la Boussole d'Or</title>
+<link rel="icon" type="image/png" href="images/icone-64.png">
+<link rel="apple-touch-icon" href="images/icone-180.png">
 <style>
 /* Style D (choisi le 30/10) : titres « Eagle Lake » (calligraphie de conte), textes « Andika » (très lisible pour les élèves). Polices libres (OFL). */
 @font-face{font-family:Conte;src:url(polices/eagle-lake-latin-400-normal.woff2) format('woff2')}
@@ -218,6 +220,9 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 #fin .fin-carte{position:relative;width:min(560px,100%);max-height:100%;overflow-y:auto;padding:16px 22px 18px;text-align:center;animation:pop .6s}
 #fin .fin-carte .grande-boussole img{width:140px;height:140px}
 #fin .fin-carte h1{font-size:clamp(28px,5vw,44px);margin:4px 0 2px}
+/* (06/11/2026) logo « Astrelune » (écran de chargement et écran de fin) */
+.logo-titre{display:block;width:min(500px,78vw);height:auto;margin:0 auto;filter:drop-shadow(0 3px 4px rgba(60,35,10,.25))}
+#fin .fin-carte .logo-titre{width:min(380px,66vw);margin:6px auto 2px}
 #fin .fin-carte .fin-titre2{font-family:Conte,serif;font-size:22px;color:var(--bois);margin-bottom:10px}
 #fin .fin-carte p{font-size:17px;line-height:1.45;color:var(--encre);margin:5px 0}
 #fin .fin-carte .fin-bilan{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin:8px auto;max-width:440px;font-weight:700;color:var(--bois);font-size:16px}
@@ -229,7 +234,7 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 <body>
 <div id="scene"></div>
 <div id="chargement"><div class="parchemin boite">
-  <h1 class="titre-or">Les Chroniques<br>d'Astrelune</h1>
+  <img class="logo-titre" src="images/logo-astrelune.png" alt="Astrelune">
   <div class="ruban">La Boussole d'Or</div>
   <div id="barre"><div></div></div>
   <p id="info">Chargement du village…</p>
@@ -291,6 +296,6 @@ body.tactile #aide{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px)}
 <script src="contenu/monde-francais.js"></script>
 <script src="contenu/monde-eveil.js"></script>
 <script src="donnees/liste.js"></script>
-<script src="astrelune.js?v=c5442247b2"></script>
+<script src="astrelune.js?v=3214f1761f"></script>
 </body>
 </html>

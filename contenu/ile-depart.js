@@ -1,5 +1,5 @@
 /* =====================================================================
-   LES CHRONIQUES D'ASTRELUNE — L'ILE DE DÉPART (modifiable par l'enseignant)
+   ASTRELUNE — L'ILE DE DÉPART (modifiable par l'enseignant)
    ---------------------------------------------------------------------
    Nouvelle organisation (05/11/2026) :
    - Aora, sur la place, pose 3 questions (comme les promeneurs des mondes) :
