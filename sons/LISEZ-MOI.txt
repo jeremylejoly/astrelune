@@ -1,0 +1,4 @@
+Instruments enregistrés utilisés par la musique d'Astrelune.
+Source : VS Chamber Orchestra: Community Edition (Versilian Studios), licence CC0 1.0 (domaine public).
+https://github.com/sgossner/VSCO-2-CE
+Fichiers : <instrument>-<note MIDI>.mp3 (mono, 96 kb/s, normalisés par instrument).
