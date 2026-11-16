@@ -9,6 +9,6 @@
    appareils (l'élève peut la remettre).
    ===================================================================== */
 window.ASTRELUNE_REGLAGES = {
-  codeEnseignant: 'astrelune',
+  codeEnseignant: 'LCML56',
   musiqueAuDemarrage: true,
 };
