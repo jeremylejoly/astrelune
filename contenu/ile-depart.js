@@ -50,7 +50,7 @@ window.ASTRELUNE_ILE = {
             ] },
             { nom: 'pluriel et accords', questions: [
               { q: "Quel est le pluriel de « un cheval » ?", options: ['des chevaux', 'des chevals', 'des chevaus', 'des chevaix'], correct: 0, explication: "Les mots en « al » font souvent leur pluriel en « aux » : un cheval, des chevaux." },
-              { q: "Écris le pluriel : un ami, des …", type: 'saisie', reponse: 'amis', explication: "Au pluriel, on ajoute souvent un « s » : un ami, des amis." },
+              { q: "Écris le pluriel : un ami, des …", type: 'saisie', clavier: 'texte', reponse: 'amis', explication: "Au pluriel, on ajoute souvent un « s » : un ami, des amis." },
               { q: "Complète : « Les fleurs sont ___. »", options: ['jolies', 'jolie', 'jolis', 'joli'], correct: 0, explication: "« fleurs » est féminin et pluriel : jolie + e + s = jolies." },
             ] },
             { nom: 'vocabulaire', questions: [
@@ -116,7 +116,7 @@ window.ASTRELUNE_ILE = {
             ] },
             { nom: 'le corps', questions: [
               { q: "Quel organe fait circuler le sang dans le corps ?", options: ['le cœur', 'le poumon', "l'estomac", 'le cerveau'], correct: 0, explication: "Le cœur est un muscle qui pompe le sang dans tout le corps." },
-              { q: "Avec quel sens reconnais-tu une odeur ?", options: ["l'odorat", 'le goût', "l'ouïe", 'le toucher'], correct: 0, explication: "On sent les odeurs avec le nez : c'est l'odorat." },
+              { q: "Avec quel sens reconnais-tu une odeur ?", options: ["l'odorat", 'le gout', "l'ouïe", 'le toucher'], correct: 0, explication: "On sent les odeurs avec le nez : c'est l'odorat." },
               { q: "Comment appelle-t-on l'ensemble des os du corps ?", options: ['le squelette', 'les muscles', 'la peau', 'le sang'], correct: 0, explication: "Tous les os ensemble forment le squelette." },
             ] },
             { nom: 'matière et machines', questions: [

@@ -103,16 +103,16 @@ tr.moyenne td { font-weight: 700; background: #fbfaf7; border-top: 2px solid var
 </div>
 <div id="fiche"><div class="boite" id="ficheBoite"></div></div>
 
-<script src="contenu/ile-depart.js"></script>
-<script src="contenu/enseignes.js"></script>
-<script src="contenu/monde-maths.js"></script>
-<script src="contenu/monde-francais.js"></script>
-<script src="contenu/monde-eveil.js"></script>
+<script src="contenu/ile-depart.js?v=20261116"></script>
+<script src="contenu/enseignes.js?v=20261116"></script>
+<script src="contenu/monde-maths.js?v=20261116"></script>
+<script src="contenu/monde-francais.js?v=20261116"></script>
+<script src="contenu/monde-eveil.js?v=20261116"></script>
 <script>
 (() => {
   // ---------- le catalogue des défis (mêmes règles que le jeu : pedagogie.js maisonsDuMonde, aventure.js maisonsIle) ----------
   const MATIERES = { maths: { cle: 'briqueville', nom: 'Maths', c: 'var(--maths)', icone: '➗' }, francais: { cle: 'francais', nom: 'Français', c: 'var(--francais)', icone: '✒️' }, eveil: { cle: 'eveil', nom: 'Éveil', c: 'var(--eveil)', icone: '🧭' } };
-  const MONDES = ['L\'île d\'Aora', 'Rivebelle', 'Rondecolline', 'Lacmousse', 'Cimeclaire'];
+  const MONDES = ['L\'ile d\'Aora', 'Rivebelle', 'Rondecolline', 'Lacmousse', 'Cimeclaire'];
   const C = window.MDB_CONTENU || {}, ENS = window.ASTRELUNE_ENSEIGNES || {}, ILE = window.ASTRELUNE_ILE || {};
   const CAT = { mondes: [], defis: {} };
   for (let k = 1; k <= 4; k++) {
@@ -173,13 +173,13 @@ tr.moyenne td { font-weight: 700; background: #fbfaf7; border-top: 2px solid var
   const quand = (t) => { if (!t) return '—'; const j = Math.floor((Date.now() - t) / 864e5); if (j <= 0) return 'aujourd\'hui'; if (j === 1) return 'hier'; if (j < 7) return `il y a ${j} jours`; return new Date(t).toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' }); };
   const barre = (a, b, c) => `<div class="cellule-mat"><div class="barre"><i style="width:${pct(a, b)}%;background:${c}"></i></div><span class="chiffre">${a} / ${b}</span></div>`;
   const etoiles = (n, max = 3) => `<span class="etoiles">${'★'.repeat(n)}<span class="off">${'★'.repeat(Math.max(0, max - n))}</span></span>`;
-  const etat = (b) => !b.ok ? '<span class="etiquette e-rien">Pas commencé</span>' : b.fin >= 2 ? '<span class="etiquette e-fin">🏆 Fin du jeu</span>' : b.fin === 1 ? '<span class="etiquette e-nuit">✨ Boussole réparée</span>' : `<span class="etiquette e-rien">${b.mondeMax ? 'En voyage' : 'Sur l\'île'}</span>`;
+  const etat = (b) => !b.ok ? '<span class="etiquette e-rien">Pas commencé</span>' : b.fin >= 2 ? '<span class="etiquette e-fin">🏆 Fin du jeu</span>' : b.fin === 1 ? '<span class="etiquette e-nuit">✨ Boussole réparée</span>' : `<span class="etiquette e-rien">${b.mondeMax ? 'En voyage' : 'Sur l\'ile'}</span>`;
   const mondes = (b) => `<span class="mondes" title="${b.mondeMax} monde(s) atteint(s) sur 4">${[1, 2, 3, 4].map((k) => `<i class="${b.mondeMax >= k ? 'ok' : ''}"></i>`).join('')}</span>`;
 
   let LISTE = [], VUE = 'progression', TRI = { cle: 'nom', haut: true };
   const COLS = {
     progression: [
-      ['nom', 'Élève', (b) => b.nom], ['lieu', 'Où il est', (b) => b.lieu ?? -1], ['mondeMax', 'Mondes atteints', (b) => b.mondeMax], ['ile', 'Île', (b) => b.ile],
+      ['nom', 'Élève', (b) => b.nom], ['lieu', 'Où il est', (b) => b.lieu ?? -1], ['mondeMax', 'Mondes atteints', (b) => b.mondeMax], ['ile', 'Ile', (b) => b.ile],
       ['total', 'Étoiles', (b) => b.total], ['or', 'Pièces', (b) => b.or], ['fin', 'Étape', (b) => (b.ok ? 1 : 0) + b.fin + b.mondeMax / 10], ['maj', 'Dernière partie', (b) => b.maj],
     ],
     matieres: [['nom', 'Élève', (b) => b.nom], ...Object.entries(MATIERES).map(([m, M]) => [m, `${M.icone} ${M.nom}`, (b) => pct(b.mat[m].et, b.mat[m].max)]), ['reussis', 'Défis réussis', (b) => b.reussis]],
@@ -210,7 +210,7 @@ tr.moyenne td { font-weight: 700; background: #fbfaf7; border-top: 2px solid var
     cadre.querySelectorAll('th').forEach((th) => { th.onclick = () => { const k = th.dataset.cle; TRI = { cle: k, haut: TRI.cle === k ? !TRI.haut : k === 'nom' }; afficher(); }; });
     cadre.querySelectorAll('tr.eleve').forEach((tr) => { tr.onclick = () => ouvrirFiche(LISTE.find((b) => b.nom === tr.dataset.nom)); });
     aide.textContent = VUE === 'progression'
-      ? 'Étoiles : celles des 4 mondes (3 par défi). Île : les 3 questions d\'Aora et les 4 maisons de l\'île. Clique sur un élève pour voir le détail de ses défis.'
+      ? 'Étoiles : celles des 4 mondes (3 par défi). Ile : les 3 questions d\'Aora et les 4 maisons de l\'ile. Clique sur un élève pour voir le détail de ses défis.'
       : 'Pour chaque matière : les étoiles gagnées sur le total possible dans les 4 mondes. Clique sur un élève pour voir le détail, monde par monde.';
   }
   function resume() {
@@ -244,7 +244,7 @@ tr.moyenne td { font-weight: 700; background: #fbfaf7; border-top: 2px solid var
         }
       }
       bx.innerHTML = `<button class="fermer">✕ Fermer</button><h2>${b.genre === 'fille' ? '👧' : '👦'} ${esc(b.nom)}</h2>
-        <div>${etat(b)} · ${esc(MONDES[b.lieu] || '')} · ${b.total} ★ sur ${b.max} · 🪙 ${b.or} · île ${b.ile} / ${b.ileMax} · dernière partie ${quand(b.maj)}</div>
+        <div>${etat(b)} · ${esc(MONDES[b.lieu] || '')} · ${b.total} ★ sur ${b.max} · 🪙 ${b.or} · ile ${b.ile} / ${b.ileMax} · dernière partie ${quand(b.maj)}</div>
         ${grille}${detail}`;
     }
     bx.querySelector('.fermer').onclick = () => f.classList.remove('vu');
@@ -256,7 +256,7 @@ tr.moyenne td { font-weight: 700; background: #fbfaf7; border-top: 2px solid var
 
   // ---------- export pour un tableur (CSV, séparateur ; pour Excel en français) ----------
   document.getElementById('csv').onclick = () => {
-    const t = [['Élève', 'Commencé', 'Lieu actuel', 'Mondes atteints', 'Île (sur ' + (ileMaisons.length + 1) + ')', 'Étoiles', 'Étoiles max', 'Pièces', 'Étape', ...Object.values(MATIERES).flatMap((M) => [M.nom + ' étoiles', M.nom + ' max']), 'Défis réussis', 'Dernière partie']];
+    const t = [['Élève', 'Commencé', 'Lieu actuel', 'Mondes atteints', 'Ile (sur ' + (ileMaisons.length + 1) + ')', 'Étoiles', 'Étoiles max', 'Pièces', 'Étape', ...Object.values(MATIERES).flatMap((M) => [M.nom + ' étoiles', M.nom + ' max']), 'Défis réussis', 'Dernière partie']];
     for (const b of LISTE.slice().sort((x, y) => x.nom.localeCompare(y.nom, 'fr'))) t.push([b.nom, b.ok ? 'oui' : 'non', b.ok ? MONDES[b.lieu] : '', b.mondeMax, b.ile, b.total, b.max, b.or, !b.ok ? '' : b.fin >= 2 ? 'fin du jeu' : b.fin === 1 ? 'boussole réparée' : 'en cours', ...Object.keys(MATIERES).flatMap((m) => [b.mat[m].et, b.mat[m].max]), b.reussis, b.maj ? new Date(b.maj).toLocaleString('fr-BE') : '']);
     const csv = '﻿' + t.map((r) => r.map((v) => /[;"\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : v).join(';')).join('\r\n');
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = `astrelune-${cls}-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
