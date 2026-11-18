@@ -7,8 +7,9 @@ self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', (e) => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || !/\/donnees(-leger)?\/.+\.js$/.test(u.pathname) || !u.searchParams.get('v')) return;
+  // (18/11) si le cache de l'appareil pose problème (plein, abîmé), on passe simplement par le réseau
   e.respondWith(caches.open(CACHE).then(async (c) => {
     const r = await c.match(e.request); if (r) return r;
-    const n = await fetch(e.request); if (n.ok) c.put(e.request, n.clone()); return n;
-  }));
+    const n = await fetch(e.request); if (n.ok) c.put(e.request, n.clone()).catch(() => {}); return n;
+  }).catch(() => fetch(e.request)));
 });
